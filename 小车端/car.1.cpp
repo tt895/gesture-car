@@ -5,13 +5,13 @@
  * 功能：接收蓝牙指令控制电机
  */
 
-#include "BluetoothSerial.h"
+#include "BluetoothSerial.h"// ESP32 蓝牙串口库
 
-#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)// 检查蓝牙是否启用
 #error 蓝牙未启用！请检查开发板配置
 #endif
 
-BluetoothSerial SerialBT;
+BluetoothSerial SerialBT;// 创建蓝牙串口对象
 
 // ===== 电机引脚定义 (L298N) =====
 #define ENA 14
@@ -22,22 +22,22 @@ BluetoothSerial SerialBT;
 #define ENB 32
 
 // 全局变量
-long lastCmdTime = 0;
+long lastCmdTime = 0;// 上次接收指令时间
 bool isConnected = false;  // 连接状态标志
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(115200);//调试串口初始化
 
   // 初始化电机引脚
   pinMode(ENA, OUTPUT); pinMode(IN1, OUTPUT); pinMode(IN2, OUTPUT);
   pinMode(ENB, OUTPUT); pinMode(IN3, OUTPUT); pinMode(IN4, OUTPUT);
-  stopMotors();
+  stopMotors();// 初始状态停止
 
   // 开启蓝牙 (设备名)
-  SerialBT.begin("ESP32-Car"); 
+  SerialBT.begin("ESP32-Car"); //蓝牙设备初始化
   
   // 设置蓝牙连接状态回调
-  SerialBT.register_callback(bluetoothCallback);
+  SerialBT.register_callback(bluetoothCallback);// 注册回调函数
   
   Serial.println(">>> 小车端蓝牙已启动 (COM5) <<<");
   Serial.println("设备名称: ESP32-Car");
@@ -64,8 +64,8 @@ void bluetoothCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
 }
 
 void loop() {
-  // 检测连接状态并发送心跳包（可选）
-  static unsigned long lastHeartbeat = 0;
+  // 检测连接状态并发送心跳包，用于维持连接，反映连接状态（可选）
+  static unsigned long lastHeartbeat = 0;// 上次心跳时间
   if (isConnected && millis() - lastHeartbeat > 3000) {
     SerialBT.println("[Car] HEARTBEAT");
     lastHeartbeat = millis();
@@ -74,7 +74,7 @@ void loop() {
   if (SerialBT.available()) {
     // 读取数据格式: "F,200" (指令,速度)
     String packet = SerialBT.readStringUntil('\n');
-    packet.trim(); // 去除多余空格和换行
+    packet.trim(); // 去除多余空格和换行，清理数据
 
     if (packet.length() > 0) {
       int commaIndex = packet.indexOf(',');
@@ -82,7 +82,7 @@ void loop() {
         char cmd = packet.charAt(0);
         int speed = packet.substring(commaIndex + 1).toInt();
         
-        // 执行
+        // 执行指令
         executeCommand(cmd, speed);
         lastCmdTime = millis();
         
@@ -142,4 +142,10 @@ void stopMotors() {
   digitalWrite(IN1, LOW); digitalWrite(IN2, LOW);
   digitalWrite(IN3, LOW); digitalWrite(IN4, LOW);
   analogWrite(ENA, 0); analogWrite(ENB, 0);
-}
+}// 停止所有电机，小车初始停止
+
+//- 蓝牙初始化与连接管理
+//- 电机引脚定义与初始化
+//- 主循环：指令接收与处理
+//- 电机控制函数
+//- 安全保护机制

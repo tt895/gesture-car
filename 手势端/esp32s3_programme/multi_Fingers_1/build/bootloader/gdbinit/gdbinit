@@ -1,0 +1,2 @@
+source D:/github/multi_Fingers/build/bootloader/gdbinit/symbols
+source D:/github/multi_Fingers/build/bootloader/gdbinit/connect

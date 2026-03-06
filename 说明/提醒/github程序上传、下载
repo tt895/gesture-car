@@ -1,9 +1,7 @@
 上传：
-    1.点最左边状态栏从上到下第三个长得有点像steam的图标，它右下标是更改的数量
-    2.点击提交
-    3.打开github desktop，左边状态栏显示出更改的文件，左下角的summary写上这次更改的简短说明(这个必填)
-    4.点击commit to main
-    5.点击push origin(右上角的蓝色按钮)
+    1.打开github desktop，左边状态栏显示出更改的文件，左下角的summary写上这次更改的简短说明(这个必填)
+    2.点击commit to main
+    3.点击push origin(右上角的蓝色按钮)
 下载：
     1.打开github desktop
     2.点击fetch origin(右上角的蓝色按钮)
